@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>扫雷</title>
+	<script src="jquery-1.12.1.js"></script>
+	<style>
+	.box{
+		width: 600px;
+		height: 600px;
+		border:1px solid #333;
+		margin:0 auto;  
+	}
+	.yangshi{
+		width: 58px;
+		height: 58px;
+		border: 1px solid #333;
+		float: left;
+	}
+	.box div[lei]{
+		background:red; 
+	}
+	.red{
+		background:red ;
+	}
+	.yellow{
+		background: yellow;
+	}
+	.yellowgreen{
+		background: yellowgreen;
+	}
+	.pink{
+		background: pink;
+	}
+	</style>
+</head>
+<body>
+	<div class="box"></div>
+</body>
+<script>
+	var gez=10;
+	var el='';
+	var colors=['yellow','yellowgreen','pink']
+	for(var i=0;i<Math.pow(gez+2,2);i++){
+		el+='<div></div>';
+	}
+	$('.box')
+	.html(el)
+	.find('div')
+	.addClass(function(i){
+			return 'yangshi '+colors[i%3]
+		}).end()
+	.find('div:gt(131)').removeClass().end()//:gt()选取大于给予数值的节点
+	.find('div:lt(12)').removeClass().end()//选取小于给予数值的节点
+	.find('div:nth-child(12n+1)').removeClass().end()//n表示会选取n的倍数的元素
+	.find('div:nth-child(12n)').removeClass().end()
+	.find('div').each(function(i){
+		$(this).data('index',i)
+	})
+
+	// .attr('lei',function(){
+	// 	if(Math.random()>0.9){
+	// 		return true;
+	// 	}
+	// })
+	$('.box').find( '.yangshi' )
+	.each(function(i){
+		if(Math.random()>0.8){
+			$(this).data('lei',true)
+		}
+		
+	});
+	$('.box div')
+	.click(function(){
+		if($(this).data('lei')){
+			alert('booooow!!');
+			$('.box').find('.yangshi').css('background',function(i){
+				if($('.box').find('.yangshi').eq(i).data('lei')){
+					return 'red';
+				}
+			})
+		}else{
+			var pos = $(this).data('index');
+			var num=0;
+			//$('.box div').eq(pos).css('background','red')
+			if($('.box div').eq(pos-1).data('lei')){num++}
+			if($('.box div').eq(pos+1).data('lei')){num++}
+			if($('.box div').eq(pos-11).data('lei')){num++}
+			if($('.box div').eq(pos+11).data('lei')){num++}
+			if($('.box div').eq(pos-13).data('lei')){num++}
+			if($('.box div').eq(pos+13).data('lei')){num++}
+			if($('.box div').eq(pos-12).data('lei')){num++}
+			if($('.box div').eq(pos+12).data('lei')){num++}
+			$(this).text(num);
+		}
+	})
+	
+
+
+	
+</script>
+</html>
