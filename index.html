@@ -5,96 +5,170 @@
 	<title>扫雷</title>
 	<script src="jquery-1.12.1.js"></script>
 	<style>
+	*{
+		margin:0;
+		padding:0;
+		list-style: none;
+	}
+	.difficulty{
+		width:235px;
+		margin:20px auto;
+
+	}
+	.start{
+		width:80px;
+		padding:5px 10px;
+		border-top:3px solid #ccc;
+		border-left:3px solid #999;
+		border-right:3px solid #666;
+		border-bottom:3px solid #333;
+		cursor: pointer;
+		margin:0 auto;
+	}
+	.difficulty ul:after{
+		content: '';
+		display: block;
+		clear:both;
+	}
+	.difficulty ul li{
+		float:left;
+		padding:5px 10px;
+		border-top:3px solid #ccc;
+		border-left:3px solid #999;
+		border-right:3px solid #666;
+		border-bottom:3px solid #333;
+		margin:0 10px;
+		cursor: pointer;
+	}
 	.box{
-		width: 600px;
-		height: 600px;
+		width: 500px;
+		height: 500px;
 		border:1px solid #333;
 		margin:0 auto;  
 	}
 	.yangshi{
-		width: 58px;
-		height: 58px;
-		border: 1px solid #333;
+		box-sizing: border-box;
+		border-top:3px solid #ccc;
+		border-left:3px solid #999;
+		border-right:3px solid #666;
+		border-bottom:3px solid #333;
+		background: #ddd;
+		text-align: center;
+		line-height: 43px;
 		float: left;
+		color:red;
+		font-weight: 600;
 	}
-	.box div[lei]{
-		background:red; 
+	.yangshi img{
+		width:100%;
+		height:100%;
 	}
-	.red{
-		background:red ;
-	}
-	.yellow{
-		background: yellow;
-	}
-	.yellowgreen{
-		background: yellowgreen;
-	}
-	.pink{
-		background: pink;
-	}
+	
 	</style>
 </head>
 <body>
 	<div class="box"></div>
+	<div class="btnbox">
+		<div class="difficulty">
+			<ul>
+				<li class="ease">简单</li>
+				<li class="normal">中等</li>
+				<li class="hard">困难</li>
+			</ul>
+		</div>
+		<div class="start">
+			开始新游戏
+		</div>
+	</div>
 </body>
 <script>
-	var gez=10;
-	var el='';
-	var colors=['yellow','yellowgreen','pink']
-	for(var i=0;i<Math.pow(gez+2,2);i++){
-		el+='<div></div>';
-	}
-	$('.box')
-	.html(el)
-	.find('div')
-	.addClass(function(i){
-			return 'yangshi '+colors[i%3]
-		}).end()
-	.find('div:gt(131)').removeClass().end()
-	.find('div:lt(12)').removeClass().end()
-	.find('div:nth-child(12n+1)').removeClass().end()
-	.find('div:nth-child(12n)').removeClass().end()
-	.find('div').each(function(i){
-		$(this).data('index',i)
-	})
+	var main = function (difficulty){
+		var gez=difficulty+2;
+		var el='';
+		var aa = Math.pow(gez,2)-gez;
+		console.log(aa)
+		for(var i=0;i<Math.pow(gez,2);i++){
+			el+='<div></div>';
+		}
+		$('.box')
+		.html(el)
+		.find('div')
+		.addClass(function(i){
+				return 'yangshi'
+			}).end()
+		.find('div:gt('+aa+')').removeClass().end()//:gt()选取大于给予数值的节点
+		.find('div:lt('+gez+')').removeClass().end()//选取小于给予数值的节点
+		.find('div:nth-child('+gez+'n+1)').removeClass().end()//n表示会选取n的倍数的元素
+		.find('div:nth-child('+gez+'n)').removeClass().end()
+		.find('div').each(function(i){
+			$(this).data('index',i)
+		})
+		$('.box').find( '.yangshi' )
+		.each(function(i){
+			if(Math.random()>0.8){
+				$(this).data('lei',true);
+			}
+			
+		});
+		$('.box').find( '.yangshi' ).css({
+			'width':500/difficulty+'px',
+			'height':500/difficulty+'px',
+			'lineHeight':500/difficulty+'px'
+		})
+		$('.box div')
+		.click(function(){
+			if($(this).data('lei')){
+				alert('booooow!!');
+				$('.box').find('.yangshi').each(function(i){
+					if($(this).data('lei')){
+						$(this).html('<img src="./img/lei.png">');
+						$(this).css({
+							'borderTopColor':'#666',
+							'borderLeftColor':'#333',
+							'borderRightColor':'#ccc',
+							'borderBottomColor':'#999'
 
-	// .attr('lei',function(){
-	// 	if(Math.random()>0.9){
-	// 		return true;
-	// 	}
-	// })
-	$('.box').find( '.yangshi' )
-	.each(function(i){
-		if(Math.random()>0.8){
-			$(this).data('lei',true)
-		}
-		
-	});
-	$('.box div')
-	.click(function(){
-		if($(this).data('lei')){
-			alert('booooow!!');
-			$('.box').find('.yangshi').css('background',function(i){
-				if($('.box').find('.yangshi').eq(i).data('lei')){
-					return 'red';
-				}
-			})
-		}else{
-			var pos = $(this).data('index');
-			var num=0;
-			//$('.box div').eq(pos).css('background','red')
-			if($('.box div').eq(pos-1).data('lei')){num++}
-			if($('.box div').eq(pos+1).data('lei')){num++}
-			if($('.box div').eq(pos-11).data('lei')){num++}
-			if($('.box div').eq(pos+11).data('lei')){num++}
-			if($('.box div').eq(pos-13).data('lei')){num++}
-			if($('.box div').eq(pos+13).data('lei')){num++}
-			if($('.box div').eq(pos-12).data('lei')){num++}
-			if($('.box div').eq(pos+12).data('lei')){num++}
-			$(this).text(num);
-		}
-	})
-	
+						})
+					}
+				})
+			}else{
+				var pos = $(this).data('index');
+				var num=0;
+				var se = gez-1;
+				var nw = gez+1
+				//$('.box div').eq(pos).css('background','red')
+				if($('.box div').eq(pos-1).data('lei')){num++}
+				if($('.box div').eq(pos+1).data('lei')){num++}
+				if($('.box div').eq(pos-se).data('lei')){num++}
+				if($('.box div').eq(pos+se).data('lei')){num++}
+				if($('.box div').eq(pos-nw).data('lei')){num++}
+				if($('.box div').eq(pos+nw).data('lei')){num++}
+				if($('.box div').eq(pos-gez).data('lei')){num++}
+				if($('.box div').eq(pos+gez).data('lei')){num++}
+				$(this).text(num);
+			}
+		})
+	}
+	main(10);
+	function control(){
+		var difficulty = 10;
+		$('.ease').on('click',function(){
+			main(10);
+			difficulty = 10;
+		});
+		$('.normal').on('click',function(){
+			main(15);
+			difficulty = 15;
+		})
+		$('.hard').on('click',function(){
+			main(20);
+			difficulty = 20;
+		})
+		$('.start').on('click',function(){
+			main(difficulty);
+		})
+	}
+	control();
 
 
 	
